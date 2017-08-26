@@ -1,0 +1,889 @@
+<!--
+
+　風見ノ書
+
+　毎週末の午後、ぜんまい仕掛けの時計のみを扱っている店を訪れるのが習慣になっている。
+購入するつもりはないのだけれど、大量に陳列された時計の針たちが時間を精密に刻んでゆ
+く音を聞きながら、秒針が一秒毎に六度ぶん回転するあいだの空白を、無心という空白で埋
+めていく作業をしずかに繰りかえす。
+
+　ある季節の午後、針たちのリズムに乱れが生じているのを感じた。外部からの騒音を遮る
+ための窓が開いていた。縦横約三十センチの窓枠は、四方八方からの人々が混じり合うスク
+ランブル交差点の中央部分を真中に置き、外部の風景を切り取っていた。窓枠は人々で埋め
+尽くされていた。歩行者用の信号が青から赤に変わると、人々は窓枠の外へ消えていった。
+誰もいなくなった交差点の中心に一冊の本が置かれているのを目にした。様々な車が本のそ
+ばを走り去り、様々な風を巻き起こし、ページは無闇に揺れていた。再び信号が変わり、人々
+が窓枠の内側へ入り込んできた。大勢の足が歩みを重ね、しだいに色濃くなってゆく影は、
+本から光を奪っていった。足が途絶え、信号の変わり際に生まれた数秒間の静けさのさなか、
+先ほどまであったはずの本が消え失せていることに気が付いた。初めから本は存在していな
+かったのではないかとしばらく戸惑っていたが、窓枠をとらえていた視線を店内へ移動させ
+たとき、午後一時を告げる鐘の音が一斉に鳴った。
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name=”description” content="毎週末の午後、ぜんまい仕掛けの時計のみを扱っている店を訪れるのが習慣になっている。購入するつもりはないのだけれど、大量に陳列された時計の針たちが時間を精密に刻んでゆく音を聞きながら、秒針が一秒毎に六度ぶん回転するあいだの空白を、無心という空白で埋めていく作業をしずかに繰りかえす。">
+		<meta name="viewport" content="width=device-width, user-scalable=yes, minimum-scale=1.0, maximum-scale=1.0">
+		<title>I SPEAK SO QUIETLY : 風見ノ書 Weatherbook</title>
+		<script type="text/javascript">
+		if ((navigator.userAgent.indexOf('iPhone') > 0 && navigator.userAgent.indexOf('iPad') == -1) || navigator.userAgent.indexOf('iPod') > 0 || navigator.userAgent.indexOf('Android') > 0) {
+		  location.href = './index_sp.html';
+		}
+		</script>
+		<script src="./js/jquery.min.js"></script>
+		<script src="./js/shared.js"></script>
+		<link href="./css/style.css" rel="stylesheet" media="all">
+	</head>
+	<body>
+
+		<script src="./js/FilterSample_0.js"></script>
+		<script src="./js/noise_vol_pan_0.js"></script>
+		<script src="./js/noise_vol_pan_1.js"></script>
+		<script src="./js/noise_vol_pan_2.js"></script>
+		<script src="./js/noise_vol_pan_3.js"></script>
+		<script src="./js/noise_vol_pan_4.js"></script>
+		<script src="./js/noise_vol_pan_5.js"></script>
+		<script src="./js/noise_vol_pan_6.js"></script>
+		<script src="./js/noise_vol_pan_7.js"></script>
+
+
+		<script>
+		function easeInOutQuart(t, b, c, d) {
+		  t /= d/2;
+		  if (t < 1) return c/2*t*t*t*t + b;
+		  t -= 2;
+		  return -c/2 * (t*t*t*t - 2) + b;
+		};
+		function easeInOutCubic(t, b, c, d) {
+		  t /= d/2;
+		  if (t < 1) return c/2*t*t*t + b;
+		  t -= 2;
+		  return c/2*(t*t*t + 2) + b;
+		};
+		</script>
+
+
+		<script>
+		var document_ready_flag = false;
+		var window_load_flag = false;
+
+		$(document).ready(function(){
+
+			$("#over_screen_hover").on('click',function(){
+				$('#over_screen_hover').css({'cursor':'default'});
+				$("#over_screen_hover").fadeTo(500, 0, function functionName() {
+					$('#over_screen_hover').css({'visibility':'hidden'});
+				});
+			});
+
+			$("#alert_init").hide();
+			$("#alert_finish").hide();
+			document_ready_flag = true;
+		});
+		$(window).load(function () {
+    	window_load_flag = true;
+		});
+
+		var all_loaded_timer_id = setInterval("if_chech_all_loaded()", 10);
+		function if_chech_all_loaded(){
+			if(document_ready_flag && window_load_flag && loaded_all_media_flag && all_mp3_loaded_flag){
+				$("#alert_loading").slideUp("slow");
+				fade_screen();
+
+				clearInterval(all_loaded_timer_id);
+			}
+		}
+		
+		var loaded_cnt = 0;
+		var all_play_flag = false;
+		var all_mp3_loaded_flag = false;
+		function mp3_loaded_check(){
+			loaded_cnt += 1;
+			if(loaded_cnt == pan_total_ch+1){
+				all_mp3_loaded_flag = true;
+			}
+		}
+
+		var pan_total_ch = 7;
+		var pan_ch_array = [];
+		for(var i=0;i<pan_total_ch;i++){
+			var tmp;
+			if(i == 0){
+				tmp = [Math.floor(Math.random()*2), Math.floor(Math.random()*180-90), 0.1];
+			}else{
+				tmp = [Math.floor(Math.random()*2), Math.floor(Math.random()*180-90), (Math.floor(Math.random()*25+5))/10 ];
+			}
+			pan_ch_array.push(tmp);
+		}
+		</script>
+
+
+
+
+
+
+		<div id="over_screen_hover" class="hvr-reveal"></div>
+
+		<div id="over_screen"></div>
+		
+		<div id="alert_loading">
+			<div align="center">
+			<table border=0 cellspacing=0 cellpadding=0>
+				<tr>
+					<td><img src="./images/book_loading.gif" width=30 height=18>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><span class="my_font">い&nbsp;&nbsp;ろ&nbsp;&nbsp;い&nbsp;&nbsp;ろ&nbsp;&nbsp;よみこんでいます&nbsp;&nbsp;LOADING+ING+ING</span></td>
+				</tr>
+			</table>
+		</div>
+		</div>
+
+		<div id="alert_init"><span class="my_font">スクリーンをタッチしつつつづづづけると&nbsp;&nbsp;文字や音が&nbsp;&nbsp;あらわれます<br>KEEEEEEEP TOUCHIN SCREEN, CHAR'n'SOUND COME O-o-O-U-u-U-T-t-T</span></div>
+		<div id="alert_finish" onclick="JavaScript:back2top();"><span class="my_font">はじめに&nbsp;&nbsp;もどりますか&nbsp;&nbsp;はい<br>CLIK HERE 2 GO BAK 2 DA INIT</span></div>
+
+
+
+
+
+
+		<script src="./js/three.js"></script>
+
+		<script src="./js/Detector.js"></script>
+
+
+
+		<script>
+
+		var total_word = 100;
+		for(var i=1;i<=total_word*2;i++){
+			eval( "var material" + i + ";" );
+		}
+		var material_small_array = [];
+		var material_big_array = [];
+		var rnd_rot_point_array = [];
+
+
+		var loaded_num = 0;
+		var max_loaded_num = 6 + total_word;
+		var loaded_all_media_flag = false;
+
+
+		var container;
+		var camera, scene, renderer, i, h, color, sprite, size;
+		var mouseX = 0, mouseY = 0;
+		var window_w = window.innerWidth;
+		var window_h = window.innerHeight;
+		var windowHalfX = window.innerWidth / 2;
+		var windowHalfY = window.innerHeight / 2;
+
+		var res = 1;
+		var material_p, plane_p;
+
+		var init_script_down_flag = false;
+		var script_t = 0;
+		var script_v = -400;
+		var script_timer_id;
+
+
+
+
+		var t = 0;
+		var ease_t = 0;
+		var mousedown_flag = false;
+		var mousemove_flag = false;
+		var timer_id;
+		var t_steps = 0.0006;
+		
+
+
+		function on_init_script_loop(){
+			if(script_t*1.8 < 1){
+				script_t += 0.003;
+				script_v = easeInOutQuart(script_t, 0, 4000, 1) - 400;
+			}else{
+				script_t = 1;
+				nit_script_down_flag = false;
+				clearInterval(script_timer_id);
+				renderer.setPixelRatio(0.3);
+			}
+		}
+		
+
+
+
+		for(var i=1;i<=5;i++){
+			eval( "var materialBg" + i + ";" );
+			eval( "var meshBg" + i + ";" );
+		}
+
+		var bg_group;
+		var bg_timer_id;
+		var bg_steps = 5;
+		var bg_max = 5;
+		var slide_dir = 1;
+		var fade_step = 0.003;
+
+		function on_bg_loop(){
+			var myBg = eval("materialBg"+bg_steps);
+
+			if(slide_dir == 1){
+				myBg.opacity -= fade_step;
+				if(myBg.opacity < 0){
+					myBg.opacity = 0;
+					bg_steps -= 1;
+					if(bg_steps == 1){
+						bg_steps = bg_max;
+						myBg.opacity = 0;
+						slide_dir = 2;
+					}
+				}
+			}else if(slide_dir == 2){
+				myBg.opacity += fade_step;
+				if(myBg.opacity > 1){
+					materialBg2.opacity = 1;
+					materialBg3.opacity = 1;
+					materialBg4.opacity = 1;
+					slide_dir = 1;
+				}
+			}
+		}
+		
+
+
+
+		var back2top_flag = false;
+
+		function on_enter_frame(){
+			if(mousedown_flag){
+				if(t < 1){
+					t += t_steps;
+				}else{
+					t = 1;
+				}
+			}else{
+				if(t > 0){
+					t -= t_steps;
+				}else{
+					t = 0;
+				}
+			}
+			ease_t = easeInOutCubic(t, 0, 10000, 1) - 4000;
+		
+			var vf = (ease_t + 4000)/10000;
+		
+			var my_filter;
+		
+  my_filter = vf*(2-vf);
+
+  			sound_0.changeFrequency(my_filter);
+			sound_noise_0.changeVolume(my_filter);
+			sound_noise_1.changeVolume(my_filter);
+			sound_noise_2.changeVolume(my_filter);
+			sound_noise_3.changeVolume(my_filter);
+			sound_noise_4.changeVolume(my_filter);
+			sound_noise_5.changeVolume(my_filter);
+			sound_noise_6.changeVolume(my_filter);
+			sound_noise_7.changeVolume(my_filter);
+
+			for(var i=0;i<pan_total_ch;i++){
+				if(pan_ch_array[i][0] == 0){
+					pan_ch_array[i][1] += pan_ch_array[i][2];
+					if(pan_ch_array[i][1] > 100){
+						pan_ch_array[i][0] = 1;
+					}
+				}else if(pan_ch_array[i][0] == 1){
+					pan_ch_array[i][1] -= pan_ch_array[i][2];
+					if(pan_ch_array[i][1] < -100){
+						pan_ch_array[i][0] = 0;
+					}
+				}
+				var my_noise = eval("sound_noise_"+i);
+				my_noise.changePan(pan_ch_array[i][1]);
+			}
+
+
+
+
+
+			if(back2top_flag == false){
+				if(ease_t > 5500){
+					show_alert_finish(1);
+				}else if(ease_t < 5000){
+					show_alert_finish(0);
+				}
+			}else{
+				if(ease_t < -3999){
+					clearInterval(timer_id);
+					$("#over_screen").fadeTo(1000, 1, function functionName() {
+			
+						for(var k=0;k<material_small_array.length;k++){
+							var myMaterial = material_small_array[k];
+							myMaterial.opacity = 0;
+						}
+						for(var k=0;k<material_big_array.length;k++){
+							var myMaterial = material_big_array[k];
+							myMaterial.opacity = 0;
+						}
+
+						render_phase = "script";
+
+						t = 0;
+						ease_t = 0;
+						mousedown_flag = false;
+						mousemove_flag = false;
+						t_steps = 0.0006;
+						back2top_flag = false;
+
+						init_script_down_flag = false;
+						script_t = 0;
+						script_v = -400;
+
+						res = 1;
+						renderer.setPixelRatio( res );
+						renderer.setClearColor(0xffffff, 1);
+
+						material_p.opacity = 1;
+						plane_p.position.set(0, 0, -400);
+						plane_p.rotation.set(0, 0, 0);
+						bg_group.position.set(0, 0, 0);
+						bg_group.rotation.set(0, 0, 0);
+						camera.position.set(0, 0, 1000);
+						camera.rotation.set(0, 0, 0);
+
+						fade_screen();
+					});
+				}
+			}
+		}
+		
+
+
+
+
+		if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+
+			init();
+			animate();
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+
+
+
+
+			function init() {
+				
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 1000;
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0xffffff, 0.00005 );
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( res );
+				renderer.setClearColor(0xffffff, 1);
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+
+
+
+
+				var textureLoader = new THREE.TextureLoader();
+				var tex_num_array = [5,4,3,2,1];
+				for(var i=1;i<=5;i++){
+					var i2 = tex_num_array[i-1];
+					eval( "bg" + i + " = textureLoader.load( \"./images/slide_" + i2 + "_2.jpg\", loaded_comp() );" );
+				}
+				for(var i=1;i<=5;i++){
+					eval( "materialBg" + i + " = new THREE.MeshBasicMaterial( { map: bg" + i + " } )" );
+					eval( "materialBg" + i + ".transparent = true;" );
+				}
+				var plane_w = 1000*2.8;
+				var plane_h = 750*2.8;
+				for(var i=1;i<=5;i++){
+					eval( "meshBg" + i + " = new THREE.Mesh( new THREE.PlaneBufferGeometry( " + plane_w + ", " + plane_h + " ), materialBg" + i + " )" );
+					eval( "meshBg" + i + ".position.set( 0, 0, -450 );" );
+				}
+				bg_group = new THREE.Group();
+				bg_group.position.set(0, 0, 0);
+				for(var i=1;i<=5;i++){
+					eval( "bg_group.add( meshBg" + i + " );" );
+				}
+				scene.add( bg_group );
+				
+
+
+
+
+
+
+
+				var texture_url = "./images/script_black_bg_4.png";
+				var texture = new THREE.TextureLoader().load( texture_url, loaded_comp() );
+				var geometry_p = new THREE.PlaneBufferGeometry(3498/1.5, 2075/1.5);
+
+				material_p = new THREE.MeshBasicMaterial( { map: texture } );
+				material_p.transparent = true;
+
+				plane_p = new THREE.Mesh(geometry_p, material_p);
+				plane_p.position.set(0, 0, -400);
+				plane_p.rotation.set(0, 0, 0);
+
+				scene.add(plane_p);
+				
+
+
+
+
+
+
+
+
+				for(var i=1;i<=total_word;i++){
+					eval( "sprite" + i + " = textureLoader.load( \"./images/word/word_" + i + ".gif\", loaded_comp() );" );
+				}
+				
+				for(var i=1;i<=total_word*2;i++){
+					eval( "geometry" + i + " = new THREE.Geometry();" );
+				}
+
+				
+				var max_moji_num = 1000;
+				for(var j=1;j<=total_word;j++){
+					var myGeometry = eval("geometry"+j);
+					for(var i=0;i<max_moji_num;i++){
+						var vertex = new THREE.Vector3();
+						vertex.x = THREE.Math.randFloatSpread( 9000 );
+						vertex.y = THREE.Math.randFloatSpread( 9000 );
+						vertex.z = THREE.Math.randFloatSpread( 9000 );
+						myGeometry.vertices.push( vertex );
+					}
+				}
+				for(var j=1;j<=total_word;j++){
+					var myGeometry = eval("geometry"+j);
+					var mySprite = eval("sprite"+j);
+					var myMaterial = eval("material"+j);
+					myMaterial = new THREE.PointsMaterial( { size: 120, map: mySprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
+					myMaterial.opacity = 0;//0にしておく
+					material_small_array.push(myMaterial);
+					var particle = new THREE.Points( myGeometry, myMaterial );
+					scene.add( particle );
+
+					make_rnd_rot_point_array();
+				}
+
+				
+				for(var j=(total_word+1);j<=(total_word*2);j++){
+					var myGeometry = eval("geometry"+j);
+					for(var i=0;i<1;i++){
+						var vertex = new THREE.Vector3();
+						vertex.x = THREE.Math.randFloatSpread( 9000 );
+						vertex.y = THREE.Math.randFloatSpread( 9000 );
+						vertex.z = THREE.Math.randFloatSpread( 9000 );
+						myGeometry.vertices.push( vertex );
+					}
+				}
+				for(var j=(total_word+1);j<=(total_word*2);j++){
+					var myGeometry = eval("geometry"+j);
+					var mySprite = eval("sprite"+(j-total_word));
+					var myMaterial = eval("material"+j);
+					myMaterial = new THREE.PointsMaterial( { size: 5000, map: mySprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
+					myMaterial.opacity = 0;
+					material_big_array.push(myMaterial);
+					var particle = new THREE.Points( myGeometry, myMaterial );
+					scene.add( particle );
+
+					make_rnd_rot_point_array();
+				}
+
+
+
+
+
+
+
+
+
+				window.addEventListener( 'resize', onWindowResize, false );
+				
+			}
+
+
+
+
+
+
+
+
+			
+			function loaded_comp(){
+				loaded_num += 1;
+				if(loaded_num == max_loaded_num){
+					loaded_all_media_flag = true;
+				}
+			}
+			
+
+			function fade_screen(){
+				$("#over_screen").fadeTo(3000, 0, function functionName() {
+			
+			
+					bg_timer_id = setInterval("on_bg_loop()", 10);
+
+					$('#over_screen_hover').css({'opacity':1});
+					$('#over_screen_hover').css({'cursor':'pointer'});
+					$('#over_screen_hover').css({'visibility':'visible'});
+
+					document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+					document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+					document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+					document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+				});
+			}
+			
+
+
+
+
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+			function onDocumentMouseDown( event ) {
+				if(render_phase == "script"){
+					event.preventDefault();
+					document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+					document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+					document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+
+				}else if(render_phase == "webgl"){
+					click_screen_init();
+					mousedown_flag = true;
+					mouseX = event.clientX - windowHalfX;
+					mouseY = event.clientY - windowHalfY;
+					event.preventDefault();
+					document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+					document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+					document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+				}
+			}
+			function onDocumentMouseMove( event ) {
+				if(render_phase == "webgl"){
+					if(back2top_flag == false){
+						mousemove_flag = true;
+						mouseX = event.clientX - windowHalfX;
+						mouseY = event.clientY - windowHalfY;
+					}
+				}
+			}
+			function onDocumentMouseUp( event ) {
+				if(render_phase == "script"){
+					if(init_script_down_flag == false){
+
+						if(all_play_flag == false){
+							all_play();
+							all_play_flag = true;
+						}
+
+
+						clearInterval(on_bg_loop);
+						script_timer_id = setInterval("on_init_script_loop()", 10);
+						init_script_down_flag = true;
+					}
+					document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+					document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+					document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+				}else if(render_phase == "webgl"){
+					if(back2top_flag == false){
+
+
+						mousedown_flag = false;
+						mousemove_flag = false;
+						document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+						document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+						document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+					}
+				}
+			}
+			function onDocumentMouseOut( event ) {
+				if(render_phase == "script"){
+					document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+					document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+					document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+				}else if(render_phase == "webgl"){
+					if(back2top_flag == false){
+						document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+						document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+						document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+					}
+				}
+			}
+			function onDocumentTouchStart( event ) {
+				if(render_phase == "script"){
+					if ( event.touches.length == 1 ) {
+						if(init_script_down_flag == false){
+
+
+							if(all_play_flag == false){
+								all_play();
+								all_play_flag = true;
+							}
+
+
+							clearInterval(on_bg_loop);
+							script_timer_id = setInterval("on_init_script_loop()", 10);
+							init_script_down_flag = true;
+						}
+						event.preventDefault();
+					}
+
+				}else if(render_phase == "webgl"){
+					if(back2top_flag == false){
+						if ( event.touches.length == 1 ) {
+							click_screen_init();
+							mousedown_flag = true;
+							mouseX = event.touches[ 0 ].pageX - windowHalfX;
+							mouseY = event.touches[ 0 ].pageY - windowHalfY;
+							event.preventDefault();
+						}
+					}
+				}
+			}
+			function onDocumentTouchMove( event ) {
+				if(render_phase == "script"){
+					if ( event.touches.length == 1 ) {
+						event.preventDefault();
+					}
+
+				}else if(render_phase == "webgl"){
+					if(back2top_flag == false){
+						if ( event.touches.length == 1 ) {
+							mousemove_flag = true;
+							mouseX = event.touches[ 0 ].pageX - windowHalfX;
+							mouseY = event.touches[ 0 ].pageY - windowHalfY;
+							event.preventDefault();
+						}
+					}
+				}
+			}
+			function onDocumentTouchEnd( event ){
+				if(render_phase == "webgl"){
+					if(back2top_flag == false){
+						mousedown_flag = false;
+						mousemove_flag = false;
+					}
+				}
+			}
+
+
+
+
+
+
+
+			function make_rnd_rot_point_array(){
+				var temp_array = [];
+				temp_array[0] = (Math.random()*11-5)/50;
+				temp_array[1] = (Math.random()*11-5)/50;
+				temp_array[2] = (Math.random()*11-5)/50;
+				rnd_rot_point_array.push(temp_array);
+			}
+
+
+
+
+			var render_phase = "script";
+
+
+			function render() {
+				if(render_phase == "script"){
+
+					if(init_script_down_flag){
+						res = 1 - script_t*1.8;
+						renderer.setPixelRatio( res );
+
+						plane_p.position.x += script_t*15;
+						plane_p.position.y -= script_t*15;
+						plane_p.position.z = script_v;
+						plane_p.rotation.x += script_t/66;
+						plane_p.rotation.y += script_t/120;
+						plane_p.rotation.z += script_t/60;
+
+						renderer.setClearColor(0xffffff, res);
+
+						material_p.opacity = res;
+
+						for(var i=1;i<=5;i++){
+							var myMaterial = eval("materialBg"+i);
+							if(myMaterial.opacity > 0){
+								myMaterial.opacity -= 0.1;
+							}else{
+								myMaterial.opacity = 0;
+							}
+						}
+					}
+
+					if(res < 0){
+
+
+						clearInterval(script_timer_id)
+						clearInterval(bg_timer_id);
+
+						init_script_down_flag = false;
+
+						plane_p.position.set(100000000, 0, -400);
+						plane_p.rotation.set(100000000, 0, 0);
+						bg_group.position.set(100000000, 0, 0);
+						for(var i=1;i<=5;i++){
+							var myMaterial = eval("materialBg"+i);
+							myMaterial.opacity = 1;
+						}
+
+						res = 0.3;
+						renderer.setPixelRatio( res );
+						renderer.setClearColor(0x000000, 1);
+						timer_id = setInterval("on_enter_frame()", 10);
+
+						camera.position.z = ease_t;
+
+						document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+						document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+						document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+						document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+
+						$("#over_screen").fadeTo(0, 1);
+						fade_screen_webgl();
+
+						render_phase = "webgl";
+					}
+
+				}else if(render_phase == "webgl"){
+
+					var time = Date.now() * 0.00005;
+
+					if(mousemove_flag){
+						camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+						camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
+					}
+					camera.position.z = ease_t;
+
+					for ( i = 0; i < scene.children.length-6; i ++ ) { 
+						var object = scene.children[ i ];
+
+						object.rotation.x += (rnd_rot_point_array[i][0]/50) * (t+0.01);
+						object.rotation.y += (rnd_rot_point_array[i][1]/50) * (t+0.01);
+						object.rotation.z += (rnd_rot_point_array[i][2]/50) * (t+0.01);
+					}
+
+					for(var k=0;k<material_small_array.length;k++){
+						var myMaterial = material_small_array[k];
+						myMaterial.opacity = (ease_t+4000)/1000 + 0.25;
+					}
+					for(var k=0;k<material_big_array.length;k++){
+						var myMaterial = material_big_array[k];
+						myMaterial.opacity = (ease_t+4000)/1000 + 0;
+					}
+					renderer.setPixelRatio( (Math.random()*20+200)/1000 );
+
+				}
+
+
+				renderer.render( scene, camera );
+			}
+
+
+
+
+			var sound_0 = new FilterSample_0();
+			var sound_noise_0 = new noise_vol_pan_0();
+			var sound_noise_1 = new noise_vol_pan_1();
+			var sound_noise_2 = new noise_vol_pan_2();
+			var sound_noise_3 = new noise_vol_pan_3();
+			var sound_noise_4 = new noise_vol_pan_4();
+			var sound_noise_5 = new noise_vol_pan_5();
+			var sound_noise_6 = new noise_vol_pan_6();
+			var sound_noise_7 = new noise_vol_pan_7();
+
+			function all_play(){
+			
+					sound_0.play();
+					sound_0.changeFrequency(0);
+					sound_noise_0.play();
+					sound_noise_0.changeVolume(0);
+					sound_noise_1.play();
+					sound_noise_1.changeVolume(0);
+					sound_noise_2.play();
+					sound_noise_2.changeVolume(0);
+					sound_noise_3.play();
+					sound_noise_3.changeVolume(0);
+					sound_noise_4.play();
+					sound_noise_4.changeVolume(0);
+					sound_noise_5.play();
+					sound_noise_5.changeVolume(0);
+					sound_noise_6.play();
+					sound_noise_6.changeVolume(0);
+					sound_noise_7.play();
+					sound_noise_7.changeVolume(0);
+			}
+
+
+
+
+
+		</script>
+
+
+
+		<script>
+		function click_screen_init(){
+			$("#alert_init").slideUp();
+		}
+
+		function fade_screen_webgl(){
+			$("#over_screen").fadeTo(1500, 0, function functionName() {
+					$('#alert_init').css({'visibility':'visible'});
+					$("#alert_init").slideDown("slow");
+			});
+		}
+		function show_alert_finish(i){
+			if(i == 1){
+				$('#alert_finish').css({'visibility':'visible'});
+				$("#alert_finish").slideDown("slow");
+			}else{
+				$("#alert_finish").slideUp();
+			}
+		}
+		function back2top(){
+			show_alert_finish(0);
+
+			back2top_flag = true;
+
+			document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+			document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+			document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+			mousedown_flag = false;
+			t_steps = 0.002;
+		}
+		</script>
+
+
+
+
+	</body>
+</html>

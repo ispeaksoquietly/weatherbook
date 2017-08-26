@@ -1,0 +1,98 @@
+		html {
+			height:100%;
+			padding:0px;
+			margin:0px;
+		}
+		body {
+			height:100%;
+			background-color: #000000;
+			margin: 0px;
+			padding: 0px;
+			overflow: hidden;
+		}
+		/* script */
+		#over_screen {
+			position:absolute;
+			width:100%;
+			height:100%;
+			background-color: #000;
+			opacity:1.0;
+		}
+		.my_font{
+			font-size: 12px;
+			font-family: "ＭＳ ゴシック",sans-serif;
+		}
+		#alert_loading {
+			position: absolute;
+			padding: 5px;
+			width: 100%;
+			text-align: center;
+			color:#000;
+			background-color: #fff;
+			line-height:20px;
+		}
+		/* webgl */
+		#alert_init {
+			position: absolute;
+			padding: 5px;
+			width: 100%;
+			text-align: center;
+			color:#000;
+			background-color: #fff;
+			visibility:hidden;
+			line-height:20px;
+		}
+		#alert_finish {
+			position: absolute;
+			padding: 5px;
+			width: 100%;
+			text-align: center;
+			color:#fff;
+			background-color: #000;
+			cursor:pointer;
+			visibility:hidden;
+			opacity:0.808;
+			line-height:20px;
+		}
+
+		#over_screen_hover {
+			position:absolute;
+			width:100%;
+			height:100%;
+			z-index: 900;
+			cursor:pointer;
+			visibility: hidden;
+		}
+		/* Reveal */
+		.hvr-reveal {
+		  display: inline-block;
+		  vertical-align: middle;
+		  -webkit-transform: perspective(1px) translateZ(0);
+		  transform: perspective(1px) translateZ(0);
+		  box-shadow: 0 0 1px transparent;
+		  position: relative;
+		  overflow: hidden;
+		}
+		.hvr-reveal:before {
+		  content: "";
+		  position: absolute;
+		  z-index: -1;
+		  left: 0;
+		  right: 0;
+		  top: 0;
+		  bottom: 0;
+		  border-color: #000;
+		  border-style: solid;
+		  border-width: 0;
+		  -webkit-transition-property: border-width;
+		  transition-property: border-width;
+		  -webkit-transition-duration: 0.2s;
+		  transition-duration: 0.2s;
+		  -webkit-transition-timing-function: ease-out;
+		  transition-timing-function: ease-out;
+		}
+		.hvr-reveal:hover:before, .hvr-reveal:focus:before, .hvr-reveal:active:before {
+		  -webkit-transform: translateY(0);
+		  transform: translateY(0);
+		  border-width: 10px;
+		}
